@@ -90,11 +90,23 @@ Open the cloned folder as a vault in Obsidian (**Open folder as vault**).
 
 Go to **Settings → Community Plugins**, enable community plugins, then install and enable each plugin from the table above.
 
-### 3. Configure the Tasks plugin
+### 3. Check core plugins
+
+Go to **Settings → Core Plugins** and make sure the following are **disabled** — they conflict with the community plugins this vault uses:
+
+| Core plugin | Why it must be off |
+|---|---|
+| **Templates** | Conflicts with Templater — both try to process template syntax and will interfere with each other |
+| **Daily notes** | Conflicts with Periodic Notes — both try to create daily notes and will create duplicates or wrong paths |
+
+Everything else can stay at its default.
+
+### 4. Configure the Tasks plugin
 
 The vault uses custom task statuses (`[/]` in progress, `[~]` waiting, `[-]` cancelled). These won't render correctly until you enable them.
 
 In **Settings → Tasks**:
+
 - Go to **Task Statuses**
 - Add the following custom statuses:
 
@@ -104,22 +116,36 @@ In **Settings → Tasks**:
 | `~` | Waiting / On Hold | ` ` |
 | `-` | Cancelled | `-` |
 
-### 4. Configure Templater
+### 5. Configure Templater
 
 In **Settings → Templater**:
+
 - Set **Template folder location** to `Templates`
 - Enable **Trigger Templater on new file creation**
 - Assign a hotkey to **Open Insert Template modal** (suggested: `Cmd/Ctrl+Shift+T`)
-- Assign a hotkey to **Create new note from template** for the Capture to Inbox template (suggested: `Cmd/Ctrl+Shift+C`)
 
-### 5. Configure Periodic Notes
+Then set up the capture hotkey so you can fire tasks to `Tasks.md` from anywhere in the vault:
+
+- Scroll down to **Template hotkeys**
+- Type `Templates/Capture to Inbox` in the search box
+- Click **Add new hotkey for template** and assign a key (suggested: `Cmd/Ctrl+Shift+C`)
+
+### 6. Configure Dataview
+
+In **Settings → Dataview**:
+
+- Enable **Enable JavaScript queries** — required for `dataviewjs` code blocks
+- Enable **Enable inline JavaScript queries** — required for inline `$= ...` expressions
+
+### 7. Configure Periodic Notes
 
 In **Settings → Periodic Notes**:
+
 - Enable **Daily Notes**
 - Set **Daily Note Template** to `Templates/Daily Note`
 - Set **Daily Note Folder** to `Daily`
 
-### 6. Personalize the templates
+### 8. Personalize the templates
 
 A few templates contain placeholder text you should update before use:
 
@@ -130,7 +156,7 @@ A few templates contain placeholder text you should update before use:
 
 The manager name in `1-1.md` and `Weekly Alignment.md` is prompted at note creation time — no need to hardcode it.
 
-### 7. Explore the examples
+### 9. Explore the examples
 
 Before you delete anything, open these files to see how the system works end-to-end:
 
@@ -140,9 +166,10 @@ Before you delete anything, open these files to see how the system works end-to-
 - `Projects/TracingRollout/Project Tasks.md` — see the per-project query view
 - `Projects/TracingRollout/Status/TracingRollout - 2026-04-15.md` — see a full status report
 
-### 8. Clear the examples and start fresh
+### 10. Clear the examples and start fresh
 
 When you're ready:
+
 - Delete `Projects/TracingRollout/`
 - Delete `Areas/Observability.md` and `Areas/Python.md`
 - Delete `Resources/OpenTelemetry.md` and `Resources/Pandas.md`
@@ -150,25 +177,24 @@ When you're ready:
 - Clear `Tasks.md` down to just the header comment
 - Create your first Area using `Templates/Area.md`
 
-### 9. Create your first Area
+### 11. Create your first Area
 
 Use **Templater → Templates/Area.md** to create your first area note. Good starting areas for engineers: `Observability`, `Security`, `On-Call`, `Python`, `Platform`, `Vendor`.
 
-### 10. Start capturing
+### 12. Start capturing
 
-Use your capture hotkey (Step 4) to fire tasks to `Tasks.md` from anywhere in the vault. Groom `Inbox.md` each morning.
+Use your capture hotkey (Step 5) to fire tasks to `Tasks.md` from anywhere in the vault. Groom `Inbox.md` each morning.
 
 ---
 
 ## CI / Quality Checks
 
-This repo runs three automated checks on every PR:
+This repo runs two automated checks on every PR:
 
 | Check | What it does |
 |---|---|
 | **Broken wikilink checker** | Verifies every `[[wikilink]]` resolves to a real file in the repo |
 | **Anonymization check** | Scans changed files for real names, emails, and internal URLs |
-| **Markdown lint** | Enforces consistent formatting across all `.md` files |
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for details on each check and how to handle failures.
 
