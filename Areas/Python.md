@@ -1,29 +1,30 @@
 ---
 tags:
   - area
-created: 2026-04-16
+created: 2026-03-01
 ---
 
 # Python
 
 ## Purpose
 
-Using Python effectively for data work, scripting, and automation — including the ecosystem of libraries and tools around it.
+Maintain and grow Python fluency for data engineering, scripting, and automation work. Own the Python standards and tooling conventions for the team.
 
 ## Standards
 
-- Write readable, idiomatic Python
-- Understand the libraries in use, not just the syntax
-- Keep notes on patterns and gotchas as they come up
+- All scripts use type hints and pass `mypy --strict`
+- Virtual environments via `venv` or `uv` — no global installs
+- Formatting via `ruff` — enforced in CI
+- New libraries evaluated before adding to requirements — justify the dependency
 
 ## Notes
 
-<!-- Ongoing observations, things learned, patterns worth remembering -->
+- Pandas Fundamentals learning track in progress — see [[Learning/PandasFundamentals/Index]]
 
 ## Related Projects
 
-<!-- Active projects under this area -->
+<!-- Links to active projects under this area -->
 
 ## Related Resources
 
-- [[Pandas]]
+- [[Resources/Pandas]]

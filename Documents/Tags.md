@@ -14,6 +14,7 @@
 | Root | Purpose |
 |---|---|
 | `#Type/` | What kind of note this is |
+| `#NoteType/` | System classification for structured note types |
 | `#Project/` | Discrete work with an end state |
 | `#People/` | A person associated with a task or note |
 | `#Area/` | Ongoing responsibility with no end state |
@@ -38,6 +39,21 @@ Describes what kind of note this is. Used on Resource notes. Not used on tasks.
 **`#Type/` and `#Area/` stack.** A note can be both `#Type/clipping` and `#Area/Python` — type describes what the note is, area describes what responsibility it informs.
 
 **Topics are wikilinks, not tags.** Don't create tags for subjects like `#pandas` or `#kafka`. Instead, link to the relevant Resource note (e.g., `[[Pandas]]`) in the note body. The graph and backlinks handle topic connections.
+
+---
+
+## `#NoteType/` — System Note Classification
+
+Format: `#NoteType/name`
+
+Used internally by templates to classify structured note types. Applied automatically — do not add manually.
+
+| Tag | Applied by | Meaning |
+|---|---|---|
+| `#NoteType/Meeting` | All meeting templates | Any meeting note |
+| `#NoteType/ProjectCharter` | Charter boilerplate | Project charter / index |
+| `#NoteType/ProjectStatus` | Project Status Report template | Status report note |
+| `#NoteType/Daily` | Daily Note template | Daily note |
 
 ---
 
@@ -133,4 +149,5 @@ These are **not tags** — Tasks plugin native priority flags.
 - Never stack two `#Status/` tags on the same task
 - Tag names are PascalCase after the `/` — no spaces, no abbreviations
 - `#Type/` is for Resource notes only — not for tasks
+- `#NoteType/` is applied by templates automatically — do not add manually
 - Topics (pandas, kafka, etc.) are wikilinks, not tags

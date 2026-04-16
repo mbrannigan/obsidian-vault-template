@@ -2,33 +2,36 @@
 tags:
   - resource
   - "#Type/tool"
+  - "#Area/Python"
 source: https://pandas.pydata.org/docs/
-author: 
+author: Pandas Development Team
 published: 
 created: 2026-04-16
 areas:
-  - "[[Python]]"
+  - Python
 ---
 
 # Pandas
 
-Python library for data manipulation and analysis. Built on NumPy. Core data structures are `DataFrame` (2D tabular) and `Series` (1D).
-
 ## Summary
 
-The go-to tool for working with structured data in Python — loading, cleaning, transforming, and exploring tabular datasets.
+Pandas is the standard Python library for data manipulation and analysis. Built on NumPy, it provides DataFrame and Series structures for working with labeled, tabular data — reading CSVs, transforming columns, grouping, merging, and time series analysis.
 
 ## Key Ideas
 
-- `DataFrame` is the primary object — think of it as a spreadsheet in code
-- Most operations return a new DataFrame rather than mutating in place
-- Indexing has two main flavors: `.loc[]` (label-based) and `.iloc[]` (position-based)
-- Method chaining is idiomatic — prefer `df.pipe()` for complex transformations
-- Watch out for chained assignment (`df[...][...] = ...`) — use `.loc` instead
+- **DataFrame** — 2D labeled table. Rows have an index, columns have names. Core data structure for almost everything.
+- **Series** — 1D labeled array. A single column or row of a DataFrame.
+- **Vectorized operations** — operate on entire columns at once, no Python loops needed. Orders of magnitude faster for large data.
+- **`loc` vs `iloc`** — `loc` is label-based, `iloc` is position-based. Never mix them on the same operation.
+- **GroupBy** — `df.groupby('col').agg(...)` for split-apply-combine patterns. Works with multiple columns and custom aggregation functions.
+- **`read_csv` / `to_csv`** — primary I/O for flat files. Use `dtype=` and `parse_dates=` to avoid type inference surprises.
 
 ## Notes
 
-<!-- Patterns, gotchas, useful snippets -->
+- Avoid chained indexing (`df['a']['b']`) — use `.loc[row, col]` instead to avoid SettingWithCopyWarning
+- `df.copy()` explicitly when you need a true copy, not a view
+- `df.info()` and `df.describe()` are the first two commands on any new dataset
+- For large files: use `chunksize=` in `read_csv` or switch to Polars for significant speedups
 
 ## Related Areas
 
@@ -36,5 +39,5 @@ The go-to tool for working with structured data in Python — loading, cleaning,
 
 ## Links
 
-- [Pandas Documentation](https://pandas.pydata.org/docs/)
-- [Pandas User Guide](https://pandas.pydata.org/docs/user_guide/index.html)
+- https://pandas.pydata.org/docs/
+- https://pandas.pydata.org/docs/user_guide/indexing.html

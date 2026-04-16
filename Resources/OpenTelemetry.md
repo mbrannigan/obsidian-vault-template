@@ -2,33 +2,34 @@
 tags:
   - resource
   - "#Type/tool"
+  - "#Area/Observability"
 source: https://opentelemetry.io/docs/
-author: 
+author: OpenTelemetry Authors
 published: 
-created: 2026-04-16
+created: 2026-03-15
 areas:
-  - "[[Observability]]"
+  - Observability
 ---
 
 # OpenTelemetry
 
-Vendor-neutral observability framework for instrumenting, generating, collecting, and exporting telemetry data (metrics, logs, traces).
-
 ## Summary
 
-The emerging standard for instrumentation across languages and platforms. OTel gives you a single consistent API regardless of which backend (Datadog, Honeycomb, Jaeger, Prometheus, etc.) you send data to.
+OpenTelemetry (OTel) is a vendor-neutral observability framework for generating, collecting, and exporting telemetry data — traces, metrics, and logs. It is the CNCF standard for instrumentation and is supported natively by most modern APM and observability backends.
 
 ## Key Ideas
 
-- Three pillars: traces (request flow), metrics (numeric measurements), logs (events)
-- The Collector is a standalone proxy that receives, processes, and exports telemetry — decouple your app from your backend
-- Auto-instrumentation libraries exist for most major frameworks — start there before writing custom spans
-- Context propagation is the mechanism that ties distributed traces together across service boundaries
-- Semantic conventions define standard attribute names — use them for consistent querying across services
+- **Three signals:** Traces (request flows across services), Metrics (numeric measurements over time), Logs (structured event records). OTel handles all three under one SDK.
+- **Vendor-neutral:** Instrument once, route to any backend (Grafana Tempo, Honeycomb, Datadog, Jaeger, etc.) via the OTel Collector.
+- **OTel Collector:** A standalone proxy/agent that receives telemetry from services, processes it (sampling, filtering, enrichment), and exports to one or more backends. Decouples instrumentation from backend choice.
+- **Context propagation:** Traces are linked across service boundaries via propagated context (W3C TraceContext standard). Requires all services in a call chain to propagate headers correctly.
+- **Sampling:** Head-based (decision at trace start) vs. tail-based (decision after full trace is collected). Tail-based requires a stateful collector and is more complex but more accurate for capturing errors.
 
 ## Notes
 
-<!-- Patterns, gotchas, integration notes -->
+- Python SDK: `opentelemetry-sdk`, `opentelemetry-api`, auto-instrumentation via `opentelemetry-instrument`
+- Collector config lives in `otel-collector-config.yaml` — processors, receivers, exporters
+- W3C TraceContext (`traceparent` header) is the propagation standard — ensure all HTTP clients pass it through
 
 ## Related Areas
 
@@ -36,5 +37,5 @@ The emerging standard for instrumentation across languages and platforms. OTel g
 
 ## Links
 
-- [OpenTelemetry Docs](https://opentelemetry.io/docs/)
-- [OTel Collector](https://opentelemetry.io/docs/collector/)
+- https://opentelemetry.io/docs/
+- https://opentelemetry.io/docs/collector/
