@@ -16,6 +16,8 @@ tags include #Project/ProjectName
 sort by priority
 sort by due date
 sort by scheduled date
+show backlink
+short mode
 ```
 
 ---
@@ -26,6 +28,8 @@ sort by scheduled date
 not done
 tags include #Project/ProjectName
 priority is highest
+show backlink
+short mode
 ```
 
 ---
@@ -33,9 +37,12 @@ priority is highest
 ## ⏳ Waiting (this project)
 
 ```tasks
-status.symbol is ~
+not done
+filter by function task.status.symbol === '~'
 tags include #Project/ProjectName
 group by tags
+show backlink
+short mode
 ```
 
 ---
@@ -46,4 +53,6 @@ group by tags
 done
 tags include #Project/ProjectName
 sort by done date
+show backlink
+short mode
 ```

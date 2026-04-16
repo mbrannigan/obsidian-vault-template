@@ -6,7 +6,7 @@
 
 ```tasks
 not done
-filter by function task.status.symbol == '~'
+filter by function task.status.symbol === '~'
 group by tags
 sort by due date
 show backlink
