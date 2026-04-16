@@ -1,0 +1,57 @@
+{
+  // Base: enable all rules, then selectively disable what doesn't fit a vault
+  "default": true,
+
+  // MD013 - Line length. Disable — long lines are normal in tables and frontmatter.
+  "MD013": false,
+
+  // MD033 - Inline HTML. Disable — Obsidian supports some inline HTML.
+  "MD033": false,
+
+  // MD041 - First line should be a top-level heading.
+  // Disable — many notes start with frontmatter (---), not a heading.
+  "MD041": false,
+
+  // MD034 - Bare URLs. Disable — bare URLs in notes are intentional and common.
+  "MD034": false,
+
+  // MD024 - No duplicate headings. Disable — notes often repeat headings
+  // like "## Notes" or "## Next Steps" across different files.
+  "MD024": false,
+
+  // MD022 - Headings should be surrounded by blank lines. Enable.
+  "MD022": true,
+
+  // MD025 - Single top-level heading per file. Enable.
+  "MD025": true,
+
+  // MD031 - Fenced code blocks should be surrounded by blank lines. Enable.
+  "MD031": true,
+
+  // MD040 - Fenced code blocks should have a language specified.
+  // Disable — Templater blocks and task query blocks don't use standard languages.
+  "MD040": false,
+
+  // MD010 - No hard tabs. Enable.
+  "MD010": true,
+
+  // MD047 - Files should end with a single newline. Enable.
+  "MD047": true,
+
+  // MD004 - Unordered list style. Enforce dashes.
+  "MD004": { "style": "dash" },
+
+  // MD007 - Unordered list indentation. 2 spaces.
+  "MD007": { "indent": 2 },
+
+  // MD029 - Ordered list item prefix. Use 'ordered' (1. 2. 3.) style.
+  "MD029": { "style": "ordered" },
+
+  // Ignore these paths entirely
+  "ignores": [
+    ".git/**",
+    "Backup/**",
+    "Daily/**",
+    "Templates/**"
+  ]
+}

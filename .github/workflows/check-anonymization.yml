@@ -1,0 +1,87 @@
+name: Anonymization Check
+
+on:
+  pull_request:
+    paths:
+      - '**.md'
+
+jobs:
+  anonymization:
+    name: Personal content check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check changed files for personal content
+        run: |
+          set -euo pipefail
+
+          # Get list of changed .md files in this PR
+          mapfile -t CHANGED < <(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep '\.md$' || true)
+
+          if [ ${#CHANGED[@]} -eq 0 ]; then
+            echo "No markdown files changed."
+            exit 0
+          fi
+
+          ERRORS=0
+
+          # Patterns that indicate personal/non-anonymized content.
+          # Format: description|regex
+          PATTERNS=(
+            "Real name 'Mike Brannigan'|Mike Brannigan"
+            "Repo owner username|mbrannigan"
+            "Generic real name pattern (First Last in prose)|\b[A-Z][a-z]+ [A-Z][a-z]+\b"
+            "Real email address|[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
+            "Non-placeholder Confluence URL|confluence\.(?!example\.com)[a-zA-Z0-9\-]+\.[a-zA-Z]"
+            "Non-placeholder Jira URL|jira\.(?!example\.com)[a-zA-Z0-9\-]+\.[a-zA-Z]"
+            "Internal Slack workspace URL|[a-zA-Z0-9\-]+\.slack\.com"
+            "GitHub personal repo reference|github\.com/mbrannigan"
+          )
+
+          # Files allowed to contain certain patterns (e.g. this workflow itself)
+          ALLOWLIST=(
+            ".github/workflows/check-anonymization.yml"
+            "CONTRIBUTING.md"
+          )
+
+          for f in "${CHANGED[@]}"; do
+            # Skip allowlisted files
+            SKIP=0
+            for allowed in "${ALLOWLIST[@]}"; do
+              if [[ "$f" == "$allowed" ]]; then
+                SKIP=1
+                break
+              fi
+            done
+            [ "$SKIP" -eq 1 ] && continue
+
+            # Skip files that no longer exist (deleted in PR)
+            [ -f "$f" ] || continue
+
+            for pattern_entry in "${PATTERNS[@]}"; do
+              desc="${pattern_entry%%|*}"
+              regex="${pattern_entry##*|}"
+
+              matches=$(grep -nP "$regex" "$f" || true)
+              if [ -n "$matches" ]; then
+                while IFS= read -r match; do
+                  lineno=$(echo "$match" | cut -d: -f1)
+                  echo "::warning file=$f,line=$lineno::Possible personal content ($desc)"
+                  ERRORS=$((ERRORS + 1))
+                done <<< "$matches"
+              fi
+            done
+          done
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo ""
+            echo "$ERRORS potential anonymization issue(s) found in changed files."
+            echo "Review the warnings above. Use placeholder names (Your Name, SRE Lead, etc.) and example.com URLs."
+            echo "If a match is a false positive, note it in your PR description."
+            exit 1
+          else
+            echo "No personal content detected in changed files."
+          fi

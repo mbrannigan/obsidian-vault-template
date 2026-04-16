@@ -1,0 +1,72 @@
+name: Check Wikilinks
+
+on:
+  pull_request:
+    paths:
+      - '**.md'
+  push:
+    branches:
+      - main
+    paths:
+      - '**.md'
+
+jobs:
+  wikilinks:
+    name: Broken wikilink check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Find broken wikilinks
+        run: |
+          set -euo pipefail
+
+          ERRORS=0
+
+          # Build a list of all note basenames (without extension)
+          # and full relative paths (without extension) for matching
+          mapfile -t ALL_FILES < <(find . -name '*.md' \
+            -not -path './.git/*' \
+            -not -name '.gitkeep')
+
+          declare -A BASENAMES
+          declare -A RELPATHS
+
+          for f in "${ALL_FILES[@]}"; do
+            base=$(basename "$f" .md)
+            relpath="${f#./}"
+            relpath_noext="${relpath%.md}"
+            BASENAMES["$base"]=1
+            RELPATHS["$relpath_noext"]=1
+          done
+
+          # Scan every markdown file for [[wikilinks]]
+          for f in "${ALL_FILES[@]}"; do
+            # Extract wikilink targets, strip aliases (|) and heading anchors (#)
+            mapfile -t LINKS < <(grep -oP '(?<=\[\[)[^\]]+' "$f" | sed 's/[|#].*//' | sort -u)
+
+            for link in "${LINKS[@]}"; do
+              # Skip empty
+              [ -z "$link" ] && continue
+
+              # Normalize: trim whitespace
+              link=$(echo "$link" | xargs)
+
+              # Check basename match OR full relative path match
+              base=$(basename "$link")
+              relpath_noext="$link"
+
+              if [[ -z "${BASENAMES[$base]:-}" && -z "${RELPATHS[$relpath_noext]:-}" ]]; then
+                echo "::error file=$f::Broken wikilink: [[$link]]"
+                ERRORS=$((ERRORS + 1))
+              fi
+            done
+          done
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo ""
+            echo "$ERRORS broken wikilink(s) found. Fix them or create the missing notes."
+            exit 1
+          else
+            echo "All wikilinks resolved."
+          fi
