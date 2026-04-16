@@ -21,7 +21,7 @@ Just started — working through core DataFrame concepts.
 
 ## Notes
 
-[[Pandas Fundamentals Notes]]
+[[Notes]]
 
 ## Resources Produced
 
