@@ -95,6 +95,7 @@ Go to **Settings → Community Plugins**, enable community plugins, then install
 The vault uses custom task statuses (`[/]` in progress, `[~]` waiting, `[-]` cancelled). These won't render correctly until you enable them.
 
 In **Settings → Tasks**:
+
 - Go to **Task Statuses**
 - Add the following custom statuses:
 
@@ -107,19 +108,31 @@ In **Settings → Tasks**:
 ### 4. Configure Templater
 
 In **Settings → Templater**:
+
 - Set **Template folder location** to `Templates`
 - Enable **Trigger Templater on new file creation**
+- Enable **Enable JavaScript modules** — required for the `<%* ... %>` script blocks that auto-move files on creation (daily notes, meeting notes, new projects)
 - Assign a hotkey to **Open Insert Template modal** (suggested: `Cmd/Ctrl+Shift+T`)
 - Assign a hotkey to **Create new note from template** for the Capture to Inbox template (suggested: `Cmd/Ctrl+Shift+C`)
 
-### 5. Configure Periodic Notes
+> **If Templater expressions render as raw text** (e.g. `<% tp.date.now('YYYY-MM-DD') %>` appears literally in your note), JavaScript modules is not enabled. Toggle it on and re-run the template.
+
+### 5. Configure Dataview
+
+In **Settings → Dataview**:
+
+- Enable **Enable JavaScript queries** — required for `dataviewjs` code blocks
+- Enable **Enable inline JavaScript queries** — required for inline `$= ...` expressions
+
+### 6. Configure Periodic Notes
 
 In **Settings → Periodic Notes**:
+
 - Enable **Daily Notes**
 - Set **Daily Note Template** to `Templates/Daily Note`
 - Set **Daily Note Folder** to `Daily`
 
-### 6. Personalize the templates
+### 7. Personalize the templates
 
 A few templates contain placeholder text you should update before use:
 
@@ -130,7 +143,7 @@ A few templates contain placeholder text you should update before use:
 
 The manager name in `1-1.md` and `Weekly Alignment.md` is prompted at note creation time — no need to hardcode it.
 
-### 7. Explore the examples
+### 8. Explore the examples
 
 Before you delete anything, open these files to see how the system works end-to-end:
 
@@ -140,9 +153,10 @@ Before you delete anything, open these files to see how the system works end-to-
 - `Projects/TracingRollout/Project Tasks.md` — see the per-project query view
 - `Projects/TracingRollout/Status/TracingRollout - 2026-04-15.md` — see a full status report
 
-### 8. Clear the examples and start fresh
+### 9. Clear the examples and start fresh
 
 When you're ready:
+
 - Delete `Projects/TracingRollout/`
 - Delete `Areas/Observability.md` and `Areas/Python.md`
 - Delete `Resources/OpenTelemetry.md` and `Resources/Pandas.md`
@@ -150,11 +164,11 @@ When you're ready:
 - Clear `Tasks.md` down to just the header comment
 - Create your first Area using `Templates/Area.md`
 
-### 9. Create your first Area
+### 10. Create your first Area
 
 Use **Templater → Templates/Area.md** to create your first area note. Good starting areas for engineers: `Observability`, `Security`, `On-Call`, `Python`, `Platform`, `Vendor`.
 
-### 10. Start capturing
+### 11. Start capturing
 
 Use your capture hotkey (Step 4) to fire tasks to `Tasks.md` from anywhere in the vault. Groom `Inbox.md` each morning.
 
@@ -162,13 +176,12 @@ Use your capture hotkey (Step 4) to fire tasks to `Tasks.md` from anywhere in th
 
 ## CI / Quality Checks
 
-This repo runs three automated checks on every PR:
+This repo runs two automated checks on every PR:
 
 | Check | What it does |
 |---|---|
 | **Broken wikilink checker** | Verifies every `[[wikilink]]` resolves to a real file in the repo |
 | **Anonymization check** | Scans changed files for real names, emails, and internal URLs |
-| **Markdown lint** | Enforces consistent formatting across all `.md` files |
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for details on each check and how to handle failures.
 
