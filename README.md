@@ -123,7 +123,12 @@ In **Settings → Templater**:
 - Set **Template folder location** to `Templates`
 - Enable **Trigger Templater on new file creation**
 - Assign a hotkey to **Open Insert Template modal** (suggested: `Cmd/Ctrl+Shift+T`)
-- Assign a hotkey to **Create new note from template** for the Capture to Inbox template (suggested: `Cmd/Ctrl+Shift+C`)
+
+Then set up the capture hotkey so you can fire tasks to `Tasks.md` from anywhere in the vault:
+
+- Scroll down to **Template hotkeys**
+- Type `Templates/Capture to Inbox` in the search box
+- Click **Add new hotkey for template** and assign a key (suggested: `Cmd/Ctrl+Shift+C`)
 
 ### 6. Configure Dataview
 
