@@ -24,10 +24,16 @@ jobs:
           ERRORS=0
 
           # Files to skip entirely when scanning for wikilinks.
-          # These contain literal [[wikilink]] examples in prose, not real links.
+          # These contain literal [[wikilink]] examples in prose, not real links,
+          # or are boilerplate templates with placeholder path links.
           SCAN_SKIP=(
             "./README.md"
             "./CONTRIBUTING.md"
+          )
+
+          # Directory prefixes to skip entirely (all files under these paths).
+          SCAN_SKIP_DIRS=(
+            "./Projects/_boilerplate"
           )
 
           # Build a list of all note basenames (without extension)
@@ -57,10 +63,19 @@ jobs:
 
           # Scan every markdown file for [[wikilinks]]
           for f in "${ALL_FILES[@]}"; do
-            # Skip files that should not be scanned
+            # Skip individual files
             SKIP=0
             for skip_file in "${SCAN_SKIP[@]}"; do
               if [[ "$f" == "$skip_file" ]]; then
+                SKIP=1
+                break
+              fi
+            done
+            [ "$SKIP" -eq 1 ] && continue
+
+            # Skip files under skipped directories
+            for skip_dir in "${SCAN_SKIP_DIRS[@]}"; do
+              if [[ "$f" == "$skip_dir"/* || "$f" == "$skip_dir" ]]; then
                 SKIP=1
                 break
               fi
@@ -77,24 +92,17 @@ jobs:
               # Normalize: trim whitespace
               link=$(echo "$link" | xargs)
 
-              # Skip Templater expressions: links containing {{ or {{
+              # Skip Templater expressions: links containing {{ or }}
               if [[ "$link" == *'{{'* || "$link" == *'}}' ]]; then
                 continue
               fi
 
-              # Skip placeholder links: all-caps words or known template placeholders
-              if echo "$link" | grep -qP '^[A-Z][a-z]+ [A-Z][a-z]+$'; then
-                # Only skip if it looks like a pure placeholder (two generic title-case words
-                # with no path separator)
-                if [[ "$link" != */* ]]; then
-                  # Check it's a known placeholder pattern
-                  case "$link" in
-                    "Area Name"|"Project Name"|"Your Name"|"Note Title")
-                      continue
-                      ;;
-                  esac
-                fi
-              fi
+              # Skip known placeholder names
+              case "$link" in
+                "Area Name"|"Project Name"|"Your Name"|"Note Title")
+                  continue
+                  ;;
+              esac
 
               # Strip trailing slash (folder links like [[Projects/Foo/Status/]])
               link_clean="${link%/}"
