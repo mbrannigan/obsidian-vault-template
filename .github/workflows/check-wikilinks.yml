@@ -23,14 +23,29 @@ jobs:
 
           ERRORS=0
 
+          # Files to skip entirely when scanning for wikilinks.
+          # These contain literal [[wikilink]] examples in prose, not real links,
+          # or are boilerplate templates with placeholder path links.
+          SCAN_SKIP=(
+            "./README.md"
+            "./CONTRIBUTING.md"
+          )
+
+          # Directory prefixes to skip entirely (all files under these paths).
+          SCAN_SKIP_DIRS=(
+            "./Projects/_boilerplate"
+          )
+
           # Build a list of all note basenames (without extension)
-          # and full relative paths (without extension) for matching
+          # and full relative paths (without extension) for matching.
+          # Also build a set of folder paths so [[Folder/]] links resolve.
           mapfile -t ALL_FILES < <(find . -name '*.md' \
             -not -path './.git/*' \
             -not -name '.gitkeep')
 
           declare -A BASENAMES
           declare -A RELPATHS
+          declare -A FOLDERS
 
           for f in "${ALL_FILES[@]}"; do
             base=$(basename "$f" .md)
@@ -38,10 +53,35 @@ jobs:
             relpath_noext="${relpath%.md}"
             BASENAMES["$base"]=1
             RELPATHS["$relpath_noext"]=1
+            # Register every parent directory so folder wikilinks resolve
+            dir=$(dirname "$relpath")
+            while [[ "$dir" != "." && "$dir" != "" ]]; do
+              FOLDERS["$dir"]=1
+              dir=$(dirname "$dir")
+            done
           done
 
           # Scan every markdown file for [[wikilinks]]
           for f in "${ALL_FILES[@]}"; do
+            # Skip individual files
+            SKIP=0
+            for skip_file in "${SCAN_SKIP[@]}"; do
+              if [[ "$f" == "$skip_file" ]]; then
+                SKIP=1
+                break
+              fi
+            done
+            [ "$SKIP" -eq 1 ] && continue
+
+            # Skip files under skipped directories
+            for skip_dir in "${SCAN_SKIP_DIRS[@]}"; do
+              if [[ "$f" == "$skip_dir"/* || "$f" == "$skip_dir" ]]; then
+                SKIP=1
+                break
+              fi
+            done
+            [ "$SKIP" -eq 1 ] && continue
+
             # Extract wikilink targets, strip aliases (|) and heading anchors (#)
             mapfile -t LINKS < <(grep -oP '(?<=\[\[)[^\]]+' "$f" | sed 's/[|#].*//' | sort -u)
 
@@ -52,11 +92,28 @@ jobs:
               # Normalize: trim whitespace
               link=$(echo "$link" | xargs)
 
-              # Check basename match OR full relative path match
-              base=$(basename "$link")
-              relpath_noext="$link"
+              # Skip Templater expressions: links containing {{ or }}
+              if [[ "$link" == *'{{'* || "$link" == *'}}' ]]; then
+                continue
+              fi
 
-              if [[ -z "${BASENAMES[$base]:-}" && -z "${RELPATHS[$relpath_noext]:-}" ]]; then
+              # Skip known placeholder names
+              case "$link" in
+                "Area Name"|"Project Name"|"Your Name"|"Note Title")
+                  continue
+                  ;;
+              esac
+
+              # Strip trailing slash (folder links like [[Projects/Foo/Status/]])
+              link_clean="${link%/}"
+
+              # Check basename match OR full relative path match OR folder match
+              base=$(basename "$link_clean")
+              relpath_noext="$link_clean"
+
+              if [[ -n "${BASENAMES[$base]:-}" || -n "${RELPATHS[$relpath_noext]:-}" || -n "${FOLDERS[$link_clean]:-}" ]]; then
+                : # resolved
+              else
                 echo "::error file=$f::Broken wikilink: [[$link]]"
                 ERRORS=$((ERRORS + 1))
               fi

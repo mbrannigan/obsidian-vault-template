@@ -160,6 +160,20 @@ Use your capture hotkey (Step 4) to fire tasks to `Tasks.md` from anywhere in th
 
 ---
 
+## CI / Quality Checks
+
+This repo runs three automated checks on every PR:
+
+| Check | What it does |
+|---|---|
+| **Broken wikilink checker** | Verifies every `[[wikilink]]` resolves to a real file in the repo |
+| **Anonymization check** | Scans changed files for real names, emails, and internal URLs |
+| **Markdown lint** | Enforces consistent formatting across all `.md` files |
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details on each check and how to handle failures.
+
+---
+
 ## Theme
 
 This vault ships with the [GitHub Theme](https://github.com/krios2146/obsidian-theme-github). Install it via **Settings → Appearance → Themes → Manage** and search for "GitHub Theme".

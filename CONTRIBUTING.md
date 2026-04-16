@@ -56,6 +56,8 @@ This repo tracks:
 | `.obsidian/types.json` | Property type definitions |
 | All `.md` files | Vault content and templates |
 | `.gitignore` | Exclusion rules |
+| `.markdownlint.jsonc` | Markdown lint configuration |
+| `.github/workflows/` | CI workflow definitions |
 
 ---
 
@@ -84,6 +86,61 @@ Some plugins write personal config to `.obsidian/plugins/<plugin>/data.json` —
 
 ---
 
+## CI Checks
+
+Every PR runs three automated checks. All three must pass before merging.
+
+### Broken wikilink checker
+
+**File:** `.github/workflows/check-wikilinks.yml`
+**Runs on:** PRs and pushes to `main` that touch any `.md` file
+
+Builds an index of every note in the repo and verifies that every `[[wikilink]]` resolves to a real file. Aliases (`[[link|alias]]`) and heading anchors (`[[link#section]]`) are stripped before checking.
+
+If it fails: create the missing note, rename the existing note to match, or remove the broken link.
+
+### Anonymization check
+
+**File:** `.github/workflows/check-anonymization.yml`
+**Runs on:** PRs only (diffs changed files against the base branch)
+
+Scans files changed in the PR for patterns that suggest personal or non-anonymized content:
+
+- Real names (First Last pattern)
+- The repo owner's username
+- Real email addresses
+- Non-`example.com` Confluence, Jira, or Slack URLs
+- GitHub personal repo references
+
+Emits warnings rather than hard errors, but the job still fails so matches must be acknowledged. If a match is a false positive, note it explicitly in your PR description. The workflow file and `CONTRIBUTING.md` are allowlisted.
+
+**Anonymization rules for example content:**
+- Real names → `Your Name`, `SRE Lead`, `Data Team Lead`, `Engineering Director`
+- Real company/tool names → generic equivalents
+- Real Confluence/Jira URLs → `https://confluence.example.com/...`, `https://jira.example.com/...`
+- Real project names → realistic but generic (e.g. `TracingRollout`, `PlatformMigration`)
+
+### Markdown lint
+
+**File:** `.github/workflows/lint-markdown.yml`
+**Config:** `.markdownlint.jsonc`
+**Runs on:** PRs and pushes to `main` that touch any `.md` file
+
+Runs `markdownlint-cli2` against all `.md` files. Key rules enforced:
+
+- Single top-level heading per file (`MD025`)
+- Headings surrounded by blank lines (`MD022`)
+- Fenced code blocks surrounded by blank lines (`MD031`)
+- No hard tabs (`MD010`)
+- Files end with a single newline (`MD047`)
+- Unordered lists use dashes (`MD004`)
+
+Disabled rules (intentionally): line length, inline HTML, bare URLs, duplicate headings, code block language tags. `Daily/` and `Templates/` are excluded entirely.
+
+If it fails: fix the flagged formatting issues. If a rule is too noisy for a legitimate vault pattern, open an issue to discuss updating `.markdownlint.jsonc` rather than suppressing inline.
+
+---
+
 ## Making Changes
 
 ### Branches
@@ -107,23 +164,13 @@ Good contributions:
 - New or improved example content (must be anonymized — no real names, companies, or internal tooling)
 - `.obsidian/` config improvements (tracked files only — see table above)
 - `.gitignore` additions for files that should be excluded
+- CI workflow improvements (`.github/workflows/`, `.markdownlint.jsonc`)
 
 Out of scope:
 
 - Personal vault content (real projects, real tasks, real meeting notes)
 - Changes that break the example project's internal consistency (wikilinks, task tags, etc.)
 - New top-level folders without a strong reason — the structure is intentionally minimal
-
-### Anonymization rules
-
-All example content must be free of:
-
-- Real names → use `Your Name`, `SRE Lead`, `Data Team Lead`, `Engineering Director`
-- Real company names, internal tool names, or Jira/Confluence URLs → use `example.com` placeholders
-- Real project names → use generic but realistic names like `TracingRollout`, `PlatformMigration`
-- Real tags containing personal identifiers
-
-When in doubt: would someone reading this on GitHub be able to identify a real person, team, or company? If yes, anonymize it.
 
 ### Commit messages
 
@@ -144,8 +191,9 @@ No issue numbers required for small fixes. For larger changes, reference the iss
 
 1. Push your branch to your fork
 2. Open a PR against `main` on this repo
-3. Describe what changed and why — a sentence or two is fine for small changes, more for significant ones
-4. If you changed example content, confirm in the PR description that it's been anonymized
+3. All three CI checks must pass (or false positives acknowledged in the PR description)
+4. Describe what changed and why — a sentence or two is fine for small changes, more for significant ones
+5. If you changed example content, confirm in the PR description that it's been anonymized
 
 PRs that touch `.obsidian/` config files should explain what the setting change does and why it's an improvement for new users.
 
