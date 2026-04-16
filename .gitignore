@@ -1,0 +1,12 @@
+# Obsidian workspace state
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+
+# Plugin cache files
+.obsidian/plugins/text-extractor/
+.obsidian/plugins/*/cache/
+.obsidian/plugins/*/data-cache/
+
+# OS junk
+.DS_Store
+Thumbs.db
