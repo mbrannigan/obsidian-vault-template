@@ -10,4 +10,6 @@ no scheduled date
 priority is none
 no tags
 path includes Tasks.md
+show backlink
+short mode
 ```
