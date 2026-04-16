@@ -12,6 +12,7 @@ not done
 priority is highest
 group by tags
 show backlink
+short mode
 ```
 
 ---
