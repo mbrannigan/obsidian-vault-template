@@ -90,7 +90,18 @@ Open the cloned folder as a vault in Obsidian (**Open folder as vault**).
 
 Go to **Settings → Community Plugins**, enable community plugins, then install and enable each plugin from the table above.
 
-### 3. Configure the Tasks plugin
+### 3. Check core plugins
+
+Go to **Settings → Core Plugins** and make sure the following are **disabled** — they conflict with the community plugins this vault uses:
+
+| Core plugin | Why it must be off |
+|---|---|
+| **Templates** | Conflicts with Templater — both try to process template syntax and will interfere with each other |
+| **Daily notes** | Conflicts with Periodic Notes — both try to create daily notes and will create duplicates or wrong paths |
+
+Everything else can stay at its default.
+
+### 4. Configure the Tasks plugin
 
 The vault uses custom task statuses (`[/]` in progress, `[~]` waiting, `[-]` cancelled). These won't render correctly until you enable them.
 
@@ -105,26 +116,23 @@ In **Settings → Tasks**:
 | `~` | Waiting / On Hold | ` ` |
 | `-` | Cancelled | `-` |
 
-### 4. Configure Templater
+### 5. Configure Templater
 
 In **Settings → Templater**:
 
 - Set **Template folder location** to `Templates`
 - Enable **Trigger Templater on new file creation**
-- Enable **Enable JavaScript modules** — required for the `<%* ... %>` script blocks that auto-move files on creation (daily notes, meeting notes, new projects)
 - Assign a hotkey to **Open Insert Template modal** (suggested: `Cmd/Ctrl+Shift+T`)
 - Assign a hotkey to **Create new note from template** for the Capture to Inbox template (suggested: `Cmd/Ctrl+Shift+C`)
 
-> **If Templater expressions render as raw text** (e.g. `<% tp.date.now('YYYY-MM-DD') %>` appears literally in your note), JavaScript modules is not enabled. Toggle it on and re-run the template.
-
-### 5. Configure Dataview
+### 6. Configure Dataview
 
 In **Settings → Dataview**:
 
 - Enable **Enable JavaScript queries** — required for `dataviewjs` code blocks
 - Enable **Enable inline JavaScript queries** — required for inline `$= ...` expressions
 
-### 6. Configure Periodic Notes
+### 7. Configure Periodic Notes
 
 In **Settings → Periodic Notes**:
 
@@ -132,7 +140,7 @@ In **Settings → Periodic Notes**:
 - Set **Daily Note Template** to `Templates/Daily Note`
 - Set **Daily Note Folder** to `Daily`
 
-### 7. Personalize the templates
+### 8. Personalize the templates
 
 A few templates contain placeholder text you should update before use:
 
@@ -143,7 +151,7 @@ A few templates contain placeholder text you should update before use:
 
 The manager name in `1-1.md` and `Weekly Alignment.md` is prompted at note creation time — no need to hardcode it.
 
-### 8. Explore the examples
+### 9. Explore the examples
 
 Before you delete anything, open these files to see how the system works end-to-end:
 
@@ -153,7 +161,7 @@ Before you delete anything, open these files to see how the system works end-to-
 - `Projects/TracingRollout/Project Tasks.md` — see the per-project query view
 - `Projects/TracingRollout/Status/TracingRollout - 2026-04-15.md` — see a full status report
 
-### 9. Clear the examples and start fresh
+### 10. Clear the examples and start fresh
 
 When you're ready:
 
@@ -164,13 +172,13 @@ When you're ready:
 - Clear `Tasks.md` down to just the header comment
 - Create your first Area using `Templates/Area.md`
 
-### 10. Create your first Area
+### 11. Create your first Area
 
 Use **Templater → Templates/Area.md** to create your first area note. Good starting areas for engineers: `Observability`, `Security`, `On-Call`, `Python`, `Platform`, `Vendor`.
 
-### 11. Start capturing
+### 12. Start capturing
 
-Use your capture hotkey (Step 4) to fire tasks to `Tasks.md` from anywhere in the vault. Groom `Inbox.md` each morning.
+Use your capture hotkey (Step 5) to fire tasks to `Tasks.md` from anywhere in the vault. Groom `Inbox.md` each morning.
 
 ---
 
