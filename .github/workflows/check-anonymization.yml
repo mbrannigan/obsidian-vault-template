@@ -30,21 +30,25 @@ jobs:
 
           # Patterns that indicate personal/non-anonymized content.
           # Format: description|regex
+          # NOTE: We do NOT use a generic "First Last" name pattern here — it produces
+          # too many false positives on plugin names, heading text, and role names.
+          # Instead we check for specific known identifiers only.
           PATTERNS=(
             "Real name 'Mike Brannigan'|Mike Brannigan"
-            "Repo owner username|mbrannigan"
-            "Generic real name pattern (First Last in prose)|\b[A-Z][a-z]+ [A-Z][a-z]+\b"
+            "Repo owner username 'mbrannigan' (outside of URLs)|(?<!github\.com/)mbrannigan"
             "Real email address|[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
             "Non-placeholder Confluence URL|confluence\.(?!example\.com)[a-zA-Z0-9\-]+\.[a-zA-Z]"
             "Non-placeholder Jira URL|jira\.(?!example\.com)[a-zA-Z0-9\-]+\.[a-zA-Z]"
             "Internal Slack workspace URL|[a-zA-Z0-9\-]+\.slack\.com"
-            "GitHub personal repo reference|github\.com/mbrannigan"
           )
 
-          # Files allowed to contain certain patterns (e.g. this workflow itself)
+          # Files allowed to contain certain patterns (e.g. this workflow itself,
+          # CONTRIBUTING.md which documents the patterns, and README.md which
+          # intentionally contains the repo clone URL with the owner username).
           ALLOWLIST=(
             ".github/workflows/check-anonymization.yml"
             "CONTRIBUTING.md"
+            "README.md"
           )
 
           for f in "${CHANGED[@]}"; do
